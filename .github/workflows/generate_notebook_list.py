@@ -15,7 +15,7 @@ OUTPUT_FILE = "notebooks.json"
 NOTEBOOK_DIR = "notebooks"
 SUBMODULE_ROOT = "external_notebooks"
 JHUB_INSTANCE = "workspace.climate.hub-otc.eox.at"
-IGNORE_FOLDERS = ["venv", ".git", ".github", "_build", "_data", "dist"]
+IGNORE_FOLDERS = ["venv", ".git", ".github", "_build", "_data", "dist", "docs"]
 DEF_ORG = "esa-cci"
 DEF_REPO = "cci-notebook-viewers"
 
