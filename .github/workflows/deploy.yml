@@ -38,6 +38,11 @@ jobs:
           find external_notebooks -type f \( -iname "myst.yaml" -o -iname "myst.yml" \) -exec rm -v {} +
           jupyter book build --html
 
+          # FIX: Overwrite hardcoded Webpack publicPath in MyST/Thebe bundles to respect BASE_URL
+          if [ -n "$BASE_URL" ]; then
+            find _build/html -type f -name "thebe-*.min.js" -exec sed -i "s|__webpack_require__\.p=\"/\"|__webpack_require__.p=\"${BASE_URL}/\"|g" {} +
+          fi
+
       - name: Generate Notebook List
         run: |
           python .github/workflows/generate_notebook_list.py
