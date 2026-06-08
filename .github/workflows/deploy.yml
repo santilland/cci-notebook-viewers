@@ -40,7 +40,29 @@ jobs:
 
           # FIX: Overwrite hardcoded Webpack publicPath in MyST/Thebe bundles to respect BASE_URL
           if [ -n "$BASE_URL" ]; then
-            find _build/html -type f -name "thebe-*.min.js" -exec sed -i "s|__webpack_require__\.p=\"/\"|__webpack_require__.p=\"${BASE_URL}/\"|g" {} +
+            echo "Applying BASE_URL fix for: $BASE_URL"
+            THEBE_FILES=$(find _build/html -type f -name "thebe-*.min.js")
+            FILE_COUNT=$(echo "$THEBE_FILES" | grep -c . || echo 0)
+            echo "Found $FILE_COUNT thebe-*.min.js files."
+            
+            for f in $THEBE_FILES; do
+              echo "Processing $f..."
+              # Check if the string exists before sed
+              if grep -q "__webpack_require__\.p=\"/\"" "$f"; then
+                echo "  Match found, applying replacement."
+                sed -i "s|__webpack_require__\.p=\"/\"|__webpack_require__.p=\"${BASE_URL}/\"|g" "$f"
+                # Verify change
+                if grep -q "__webpack_require__\.p=\"${BASE_URL}/\"" "$f"; then
+                  echo "  Verified: Replacement successful."
+                else
+                  echo "  Error: Replacement failed verification."
+                fi
+              else
+                echo "  No match found in this file (may have already been replaced or string differs)."
+              fi
+            done
+          else
+            echo "BASE_URL is not set, skipping webpack path fix."
           fi
 
       - name: Generate Notebook List
